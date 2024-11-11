@@ -20,7 +20,7 @@ class PythonMaker(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
 
-        # 画面レイアウト---------------------------------------------------------------------------------------
+ # 画面レイアウト---------------------------------------------------------------------------------------
         label = tk.Label(text="ファイル名を記入してください。")
         self.label2 = tk.Label(text="")
         """実行結果のラベル"""
@@ -30,8 +30,7 @@ class PythonMaker(tk.Frame):
         label.pack()
         self.entry.pack()
         button.pack()
-
-    # -----------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------        
 
     def get_text(self):
         """
@@ -44,58 +43,42 @@ class PythonMaker(tk.Frame):
         
         try:
             self.make_folder(name, dirpath)
-            # self.make_file
+            self.make_file(name,dirpath)
+            self.make_readme(name,dirpath)
+            self.print_label("ファイルの作成完了！")
+
         except Exception as e:
             print(e)
             self.print_label(e.args[-1])
 
     def make_folder(self, name, path):
         """新規フォルダの作成"""
-        #os.mkdir(path)
-
-        # 既に存在するファイル名の場合やり直しメッセージを出力
-        try:
-            os.mkdir(path)
-            self.make_file(name, path)
-        except Exception as e:
-            print(e)
-            self.print_label(e.args[-1])
-            #self.print_label("既に存在するファイルは作成できません。")
+        os.mkdir(path)
 
     def make_file(self, name, path):
         """新規Pythonファイルの作成"""
-        try:
-            shutil.copy(File_path.Templete_Python, path + File_path.Main)
+        shutil.copy(File_path.Templete_Python, path + File_path.Main)
 
-            with open(path + File_path.Main, encoding="utf-8", mode="r") as f:
-                Python_text = f.read()
+        with open(path + File_path.Main, encoding="utf-8", mode="r") as f:
+            Python_text = f.read()
 
-            with open(path + File_path.Main, encoding="utf-8", mode="w") as f:
-                f.write(Python_text.replace("File_Name", name))
-            self.make_readme(path, name)
-        except Exception as e:
-            print(e)
-            self.print_label(e.args[-1])
-
-    def make_readme(self, path, name):
-        """新規ReadMeファイルの作成"""
-        try:
-            shutil.copy(File_path.Templete_ReadMe, path + f"\\Readme.md")
-
-            # Readmeファイルの読み取り
-            with open(path + f"\\Readme.md", encoding="utf-8") as f:
-                Readme_text = f.readlines()
-                Readme_text.insert(0, f"# {name}\n")
-
-            # ReadMeファイルの書き込み
-            with open(path + f"\\Readme.md", encoding="utf-8", mode="w") as f:
-                f.writelines(Readme_text)
-
-            self.print_label("ファイルの作成完了！")
-        except Exception as e:
-            print(e)
-            self.print_label(e.args[-1])
+        with open(path + File_path.Main, encoding="utf-8", mode="w") as f:
+            f.write(Python_text.replace("File_Name", name))
             
+
+    def make_readme(self, name, path):
+        """新規ReadMeファイルの作成"""
+        shutil.copy(File_path.Templete_ReadMe, path + f"\\Readme.md")
+
+        with open(path + f"\\Readme.md", encoding="utf-8") as f:
+            Readme_text = f.readlines()
+            Readme_text.insert(0, f"# {name}\n")
+
+
+        with open(path + f"\\Readme.md", encoding="utf-8", mode="w") as f:
+            f.writelines(Readme_text)
+
+        self.print_label("ファイルの作成完了！")
 
     def print_label(self, text):
         """ラベル２に失敗成功を出力"""
